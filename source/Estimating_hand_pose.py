@@ -42,6 +42,8 @@ class HandDetector(metaclass=SingletonMeta):
         img_rgb = cv2.cvtColor(img_resize, cv2.COLOR_BGR2RGB)
         results = self.hands.process(img_rgb)
         all_hands = []
+        pixel_distance_horizontal = 0.0
+        pixel_distance_vertical = 0.0
 
         if results.multi_hand_landmarks:
             for hand_type, hand_lms in zip(results.multi_handedness, results.multi_hand_landmarks):
@@ -67,12 +69,25 @@ class HandDetector(metaclass=SingletonMeta):
                 my_hand["type"] = "Left" if hand_type.classification[0].label == "Right" else "Right"
                 all_hands.append(my_hand)
 
+                if len(my_lm_list) >= 21:
+                    x1, y1, _ = my_lm_list[5]
+                    x2, y2, _ = my_lm_list[17]
+                    x3, y3, _ = my_lm_list[9]
+                    x4, y4, _ = my_lm_list[0]
+
+                    pixel_distance_horizontal = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)  # Euclidean distance
+                    pixel_distance_vertical = math.sqrt((x3 - x4) ** 2 + (y3 - y4) ** 2)  # Euclidean distance
+
                 if draw:
-                    self.mp_draw.draw_landmarks(img, hand_lms, self.mp_hands.HAND_CONNECTIONS)
-                    cv2.rectangle(img, (bbox[0] - 20, bbox[1] - 20),
-                                  (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20), (255, 255, 255), 2)
-                    cv2.putText(img, my_hand["type"], (bbox[0] - 30, bbox[1] - 30),
-                                cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2)
+                    # self.mp_draw.draw_landmarks(img, hand_lms, self.mp_hands.HAND_CONNECTIONS)
+                    # cv2.rectangle(img, (bbox[0] - 20, bbox[1] - 20),
+                    #               (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20), (255, 255, 255), 2)
+                    # cv2.putText(img, my_hand["type"], (bbox[0] - 30, bbox[1] - 30),
+                    #             cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2)
+                    cv2.putText(img, str(pixel_distance_horizontal), (bbox[0] + 70, bbox[1] - 30),
+                                cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2)
+                    cv2.putText(img, str(pixel_distance_vertical), (bbox[0] + 100, bbox[1] - 30),
+                                cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2)
         return img
 
 
