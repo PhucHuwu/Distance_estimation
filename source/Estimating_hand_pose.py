@@ -79,11 +79,11 @@ class HandDetector(metaclass=SingletonMeta):
                     pixel_distance_vertical = math.sqrt((x3 - x4) ** 2 + (y3 - y4) ** 2)  # Euclidean distance
 
                 if draw:
-                    # self.mp_draw.draw_landmarks(img, hand_lms, self.mp_hands.HAND_CONNECTIONS)
-                    # cv2.rectangle(img, (bbox[0] - 20, bbox[1] - 20),
-                    #               (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20), (255, 255, 255), 2)
-                    # cv2.putText(img, my_hand["type"], (bbox[0] - 30, bbox[1] - 30),
-                    #             cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2)
+                    self.mp_draw.draw_landmarks(img, hand_lms, self.mp_hands.HAND_CONNECTIONS)
+                    cv2.rectangle(img, (bbox[0] - 20, bbox[1] - 20),
+                                  (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20), (255, 255, 255), 2)
+                    cv2.putText(img, my_hand["type"], (bbox[0] - 30, bbox[1] - 30),
+                                cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2)
                     cv2.putText(img, str(pixel_distance_horizontal), (bbox[0] + 70, bbox[1] - 30),
                                 cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2)
                     cv2.putText(img, str(pixel_distance_vertical), (bbox[0] + 100, bbox[1] - 30),
