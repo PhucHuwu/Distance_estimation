@@ -35,13 +35,16 @@ class HandDetector(metaclass=SingletonMeta):
         )
         self.mp_draw = mp.solutions.drawing_utils
 
-    def find_hands(self, img: np.ndarray,
+    def find_hands(self, img: np.ndarray, coeff1: Tuple[float, float, float], coeff2: Tuple[float, float, float],
                    draw: bool = True, flip_type: bool = True) -> Tuple[
             List[Dict], np.ndarray, float, float, float, float, float]:
         img_resize = cv2.resize(img, (640, 480))
         img_rgb = cv2.cvtColor(img_resize, cv2.COLOR_BGR2RGB)
         results = self.hands.process(img_rgb)
         all_hands = []
+        distance1 = 0.0
+        distance2 = 0.0
+        distance = 0.0
         pixel_distance_horizontal = 0.0
         pixel_distance_vertical = 0.0
 
@@ -75,8 +78,15 @@ class HandDetector(metaclass=SingletonMeta):
                     x3, y3, _ = my_lm_list[9]
                     x4, y4, _ = my_lm_list[0]
 
-                    pixel_distance_horizontal = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)  # Euclidean distance
-                    pixel_distance_vertical = math.sqrt((x3 - x4) ** 2 + (y3 - y4) ** 2)  # Euclidean distance
+                    pixel_distance_horizontal = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+                    pixel_distance_vertical = math.sqrt((x3 - x4) ** 2 + (y3 - y4) ** 2)
+
+                    a1, b1, c1 = coeff1
+                    a2, b2, c2 = coeff2
+                    distance1 = a1 * pixel_distance_horizontal ** 2 + b1 * pixel_distance_horizontal + c1
+                    distance2 = a2 * pixel_distance_vertical ** 2 + b2 * pixel_distance_vertical + c2
+
+                    distance = round(min(distance1, distance2), 4)
 
                 if draw:
                     self.mp_draw.draw_landmarks(img, hand_lms, self.mp_hands.HAND_CONNECTIONS)
@@ -84,11 +94,10 @@ class HandDetector(metaclass=SingletonMeta):
                                   (bbox[0] + bbox[2] + 20, bbox[1] + bbox[3] + 20), (255, 255, 255), 2)
                     cv2.putText(img, my_hand["type"], (bbox[0] - 30, bbox[1] - 30),
                                 cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 2)
-                    cv2.putText(img, str(pixel_distance_horizontal), (bbox[0] + 70, bbox[1] - 30),
+                    cv2.putText(img, str(distance), (bbox[0] + 70, bbox[1] - 30),
                                 cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2)
-                    cv2.putText(img, str(pixel_distance_vertical), (bbox[0] + 100, bbox[1] - 30),
-                                cv2.FONT_HERSHEY_PLAIN, 2, (0, 0, 255), 2)
-        return img
+
+        return all_hands, img, distance, distance1, distance2, pixel_distance_horizontal, pixel_distance_vertical
 
 
 def main():
@@ -97,18 +106,27 @@ def main():
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
 
     if not cap.isOpened():
+        print("Error: Cannot open camera.")
         return
 
     hand_detector = HandDetector()
+    raw_distances_1 = [240, 195, 174, 145, 130, 116, 105, 95, 86, 81, 75, 70, 65, 62, 58, 55, 53, 50, 48, 46]
+    cm_distances_1 = [22, 27, 32, 37, 42, 47, 52, 57, 62, 67, 72, 77, 82, 87, 92, 97, 102, 107, 112, 117]
+    raw_distances_2 = [360, 295, 253, 222, 193, 173, 158, 148, 134, 126, 115, 109, 101, 96, 91, 87, 82, 78, 75, 72]
+    cm_distances_2 = [22, 27, 32, 37, 42, 47, 52, 57, 62, 67, 72, 77, 82, 87, 92, 97, 102, 107, 112, 117]
+
+    coeff1 = np.polyfit(raw_distances_1, cm_distances_1, 2)
+    coeff2 = np.polyfit(raw_distances_2, cm_distances_2, 2)
 
     while True:
         success, image = cap.read()
         if not success:
+            print("Error: Cannot read frame from camera.")
             break
 
-        image = hand_detector.find_hands(image)
+        hands, image, distance, distance1, distance2, pixel_distance_1, pixel_distance_2 = hand_detector.find_hands(image, coeff1, coeff2)
 
-        cv2.imshow('Hand', image)
+        cv2.imshow('Camera Feed', image)
 
         if cv2.waitKey(1) & 0xFF == 27:
             break
