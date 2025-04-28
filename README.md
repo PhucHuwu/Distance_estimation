@@ -107,7 +107,7 @@ Three videos were tested in different environments to evaluate the model’s app
 - **Environment:** Anaconda 9.0.
 
 ## Dependencies
-- **OpenCV 4.5.5:** For video capture and image processing.
+- **OpenCV 4.5.5.64:** For video capture and image processing.
 - **MediaPipe 0.10.8:** For hand landmark detection.
 - **Numpy 1.26.4:** For numerical computations and regression fitting.
 - **Matplotlib 3.9.2:** For data visualization.
