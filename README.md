@@ -120,7 +120,7 @@ pip install opencv-python==4.5.5.64 mediapipe==0.10.8 numpy==1.26.4 matplotlib==
 1. Ensure a video file is available at the specified path (default: `video.mp4`).
 2. Run the Python script:
    ```bash
-   python runwithvideo.py
+   python Estimating_hand_pose.py
    ```
 3. Real-time predictions and visualization will be displayed.
 
