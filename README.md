@@ -71,7 +71,7 @@ The collection of experimental data on real-world distances and pixel distances 
    - The hand was placed at fixed distances from the camera, ranging from 22 cm to 117 cm, with increments of 5 cm.
 
 3. **Pixel Distance Measurement:**
-   - The chosen landmarks were points 5-17 and 0-9 on the hand, ensuring high measurement accuracy. Pixel distances were determined by analyzing images captured from the camera, forming relationships between real-world and pixel distances.
+   - The chosen landmarks were points 5 - 17 and 0 - 9 on the hand, ensuring high measurement accuracy. Pixel distances were determined by analyzing images captured from the camera, forming relationships between real-world and pixel distances.
 
 4. **Real-World Distance Measurement:**
    - For each recorded pixel distance, the real-world distance from the camera to the hand was precisely measured. Measurements were performed using accurate tools to minimize errors. These real-world distance values were stored and linked to their corresponding pixel distance values, forming a standardized dataset for modeling.
