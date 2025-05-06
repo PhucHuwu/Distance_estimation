@@ -1,6 +1,6 @@
 # Nonlinear Regression: Estimating Hand-to-Camera Distance
 
-This project implements a quadratic nonlinear regression model to estimate the real-world distance between a hand and a camera based on the relative positions of hand landmarks in 2D images. The approach takes into account the nonlinear perspective effect observed in 2D image data when a hand moves closer to or farther from the camera.
+Welcome to the Hand-to-Camera Distance Estimation project! This project implements a quadratic nonlinear regression model to estimate the real-world distance between a hand and a camera based on the relative positions of hand landmarks in 2D images. The approach takes into account the nonlinear perspective effect observed in 2D image data when a hand moves closer to or farther from the camera, providing accurate distance measurements in real-time.
 
 ## Background
 
@@ -82,10 +82,10 @@ The collection of experimental data on real-world distances and pixel distances 
 The final result of the data collection process was a dataset comprising pixel distances and corresponding real-world distances.
 
 ## Key Features
-- **Hand Detection:** Utilized MediaPipe Hands for landmark detection.
-- **Regression Analysis:** Applied numpy’s polyfit for model fitting.
-- **Visualization:** Generated real-time plots of pixel and predicted distances using Matplotlib.
-- **Real-Time Processing:** Supported video frame-by-frame hand distance estimation using OpenCV.
+- **Hand Detection:** Utilized [MediaPipe Hands](https://developers.google.com/mediapipe/solutions/vision/hand_landmarker) for landmark detection.
+- **Regression Analysis:** Applied [NumPy](https://numpy.org)’s polyfit for model fitting.
+- **Visualization:** Generated real-time plots of pixel and predicted distances using [Matplotlib](https://matplotlib.org).
+- **Real-Time Processing:** Supported video frame-by-frame hand distance estimation using [OpenCV](https://opencv.org).
 
 ## Performance Metrics
 - **RAM Usage:** 176.6 MB
@@ -103,14 +103,14 @@ Three videos were tested in different environments to evaluate the model’s app
 ## System Configuration
 - **Hardware:** Gigabyte G5 GD with Intel i5-11th Gen (6 cores, 12 threads, 4.5GHz), 16GB RAM, NVIDIA GeForce RTX 30 Series.
 - **Operating System:** Windows 11 Home (64-bit).
-- **Programming Language:** Python 3.10.15.
+- **Programming Language:** Python 3.10.
 - **Environment:** Anaconda 9.0.
 
 ## Dependencies
-- **OpenCV 4.5.5.64:** For video capture and image processing.
-- **MediaPipe 0.10.8:** For hand landmark detection.
-- **Numpy 1.26.4:** For numerical computations and regression fitting.
-- **Matplotlib 3.9.2:** For data visualization.
+- **[OpenCV](https://opencv.org/) 4.5.5.64:** For video capture and image processing.
+- **[MediaPipe](https://developers.google.com/mediapipe) 0.10.8:** For hand landmark detection.
+- **[NumPy](https://numpy.org/) 1.26.4:** For numerical computations and regression fitting.
+- **[Matplotlib](https://matplotlib.org/) 3.9.2:** For data visualization.
 
 ```bash
 pip install opencv-python==4.5.5.64 mediapipe==0.10.8 numpy==1.26.4 matplotlib==3.9.2
@@ -120,8 +120,9 @@ pip install opencv-python==4.5.5.64 mediapipe==0.10.8 numpy==1.26.4 matplotlib==
 1. Ensure a video file is available at the specified path (default: `video.mp4`).
 2. Run the Python script:
    ```bash
-   python runwithcam.py
+   python source/Estimating_hand_pose.py
    ```
+   The main implementation can be found in [source/Estimating_hand_pose.py](source/Estimating_hand_pose.py).
 3. Real-time predictions and visualization will be displayed.
 
 ## Results
@@ -131,3 +132,5 @@ pip install opencv-python==4.5.5.64 mediapipe==0.10.8 numpy==1.26.4 matplotlib==
 ## Acknowledgments
 This project demonstrates the efficacy of quadratic nonlinear regression for practical 3D distance estimation tasks, leveraging the simplicity and robustness of a parabolic model in the context of 2D image data.
 
+## Contributing
+We welcome contributions to improve this project! Feel free to submit issues or pull requests with enhancements, bug fixes, or documentation improvements.
