@@ -1,6 +1,6 @@
 # Nonlinear Regression: Estimating Hand-to-Camera Distance
 
-Welcome to the Hand-to-Camera Distance Estimation project! This project implements a quadratic nonlinear regression model to estimate the real-world distance between a hand and a camera based on the relative positions of hand landmarks in 2D images. The approach takes into account the nonlinear perspective effect observed in 2D image data when a hand moves closer to or farther from the camera, providing accurate distance measurements in real-time.
+Welcome to my Hand-to-Camera Distance Estimation project! This project implements a quadratic nonlinear regression model to estimate the real-world distance between a hand and a camera based on the relative positions of hand landmarks in 2D images. My approach takes into account the nonlinear perspective effect observed in 2D image data when a hand moves closer to or farther from the camera, providing accurate distance measurements in real-time.
 
 ## Background
 
@@ -16,7 +16,7 @@ Where:
 - $f(x, \theta)$ : Nonlinear function of the independent variable(s) $x$, parameterized by coefficients $\theta$.
 - $\varepsilon$ : Random noise or error.
 
-In this project, we employ a quadratic model of the form:
+In this project, I employ a quadratic model of the form:
 
 $$
 y = a x^2 + b x + c + \varepsilon
@@ -24,7 +24,7 @@ $$
 
 ## Problem Statement
 
-The project aims to estimate the real-world distance between a hand and a camera based on 2D image data. Specifically, we:
+The project aims to estimate the real-world distance between a hand and a camera based on 2D image data. Specifically, I:
 - Analyzed how the distance between hand landmarks varies with the hand’s position relative to the camera.
 - Used the quadratic nonlinear regression model to predict the actual distance from the 2D pixel distance between specific hand landmarks.
 
@@ -113,18 +113,18 @@ Three videos were tested in different environments to evaluate the model’s app
 - **[Matplotlib](https://matplotlib.org/) 3.9.2:** For data visualization.
 
 ```bash
-pip install opencv-python==4.5.5.64 mediapipe==0.10.8 numpy==1.26.4 matplotlib==3.9.2
+pip install -r requirements.txt
 ```
 
 ## Usage
 1. Ensure a video file is available at the specified path (default: `video.mp4`).
 2. Run the Python script:
    ```bash
-   runwithcam.py
+   python source/runwithcam.py
    ```
    or
    ```bash
-   runwithvideo.py
+   python source/runwithvideo.py
    ```
    The main implementation can be found in [source/runwithcam.py](source/runwithcam.py) or [source/runwithvideo.py](source/runwithvideo.py).
 3. Real-time predictions and visualization will be displayed.
@@ -137,4 +137,4 @@ pip install opencv-python==4.5.5.64 mediapipe==0.10.8 numpy==1.26.4 matplotlib==
 This project demonstrates the efficacy of quadratic nonlinear regression for practical 3D distance estimation tasks, leveraging the simplicity and robustness of a parabolic model in the context of 2D image data.
 
 ## Contributing
-We welcome contributions to improve this project! Feel free to submit issues or pull requests with enhancements, bug fixes, or documentation improvements.
+I welcome contributions to improve this project! Feel free to submit issues or pull requests with enhancements, bug fixes, or documentation improvements.
