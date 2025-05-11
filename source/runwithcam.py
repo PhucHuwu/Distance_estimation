@@ -2,12 +2,13 @@ import math
 import cv2
 import mediapipe as mp
 import numpy as np
+import matplotlib.pyplot as plt
 from typing import List, Tuple, Dict
 
 
 class SingletonMeta(type):
     _instances = {}
-
+    
     def __call__(cls, *args, **kwargs):
         if cls not in cls._instances:
             instance = super().__call__(*args, **kwargs)
@@ -37,7 +38,7 @@ class HandDetector(metaclass=SingletonMeta):
 
     def find_hands(self, img: np.ndarray, coeff1: Tuple[float, float, float], coeff2: Tuple[float, float, float],
                    draw: bool = True, flip_type: bool = True) -> Tuple[
-            List[Dict], np.ndarray, float, float, float, float, float]:
+        List[Dict], np.ndarray, float, float, float, float, float]:
         img_resize = cv2.resize(img, (640, 480))
         img_rgb = cv2.cvtColor(img_resize, cv2.COLOR_BGR2RGB)
         results = self.hands.process(img_rgb)
@@ -51,8 +52,8 @@ class HandDetector(metaclass=SingletonMeta):
         if results.multi_hand_landmarks:
             for hand_type, hand_lms in zip(results.multi_handedness, results.multi_hand_landmarks):
                 my_hand = {}
-                my_lm_list = []
-                x_list, y_list = [], []
+                my_lm_list = []  # List of hand landmarks
+                x_list, y_list = [], []  # X and Y coordinates of landmarks
                 h, w, _ = img.shape
 
                 for id, lm in enumerate(hand_lms.landmark):
@@ -78,13 +79,13 @@ class HandDetector(metaclass=SingletonMeta):
                     x3, y3, _ = my_lm_list[9]
                     x4, y4, _ = my_lm_list[0]
 
-                    pixel_distance_horizontal = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
-                    pixel_distance_vertical = math.sqrt((x3 - x4) ** 2 + (y3 - y4) ** 2)
+                    pixel_distance_horizontal = math.sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)  # Euclidean distance
+                    pixel_distance_vertical = math.sqrt((x3 - x4) ** 2 + (y3 - y4) ** 2)  # Euclidean distance
 
                     a1, b1, c1 = coeff1
                     a2, b2, c2 = coeff2
-                    distance1 = a1 * pixel_distance_horizontal ** 2 + b1 * pixel_distance_horizontal + c1
-                    distance2 = a2 * pixel_distance_vertical ** 2 + b2 * pixel_distance_vertical + c2
+                    distance1 = a1 * pixel_distance_horizontal ** 2 + b1 * pixel_distance_horizontal + c1  # Quadratic fit
+                    distance2 = a2 * pixel_distance_vertical ** 2 + b2 * pixel_distance_vertical + c2  # Quadratic fit
 
                     distance = round(min(distance1, distance2), 4)
 
@@ -101,6 +102,8 @@ class HandDetector(metaclass=SingletonMeta):
 
 
 def main():
+    num = 0
+
     cap = cv2.VideoCapture(0)
     cap.set(cv2.CAP_PROP_FRAME_WIDTH, 1280)
     cap.set(cv2.CAP_PROP_FRAME_HEIGHT, 720)
@@ -118,6 +121,16 @@ def main():
     coeff1 = np.polyfit(raw_distances_1, cm_distances_1, 2)
     coeff2 = np.polyfit(raw_distances_2, cm_distances_2, 2)
 
+    plt.ion()
+    fig, ax = plt.subplots()
+    ax.set_xlabel('Pixel Distance')
+    ax.set_ylabel('Actual Distance (cm)')
+
+    pixel_distances_1 = []
+    pixel_distances_2 = []
+    actual_distances_1 = []
+    actual_distances_2 = []
+
     while True:
         success, image = cap.read()
         if not success:
@@ -126,6 +139,29 @@ def main():
 
         hands, image, distance, distance1, distance2, pixel_distance_1, pixel_distance_2 = hand_detector.find_hands(image, coeff1, coeff2)
 
+        if num % 100 == 0:
+            pixel_distances_1.append(pixel_distance_1)
+            pixel_distances_2.append(pixel_distance_2)
+            actual_distances_1.append(distance1)
+            actual_distances_2.append(distance2)
+
+            ax.clear()
+
+            x_fit_1 = np.linspace(min(pixel_distances_1), max(pixel_distances_1), 100)
+            y_fit_1_cubic = np.polyval(coeff1, x_fit_1)
+
+            x_fit_2 = np.linspace(min(pixel_distances_2), max(pixel_distances_2), 100)
+            y_fit_2_cubic = np.polyval(coeff2, x_fit_2)
+
+            plt.scatter(pixel_distances_1, actual_distances_1, color='blue', label='5 và 17')
+            plt.scatter(pixel_distances_2, actual_distances_2, color='purple', label='9 và 0')
+            plt.plot(x_fit_1, y_fit_1_cubic, color='skyblue', label='Fit line 1')
+            plt.plot(x_fit_2, y_fit_2_cubic, color='red', label='Fit line 2')
+
+            ax.legend()
+            plt.pause(0.001)
+        num += 1
+
         cv2.imshow('Camera Feed', image)
 
         if cv2.waitKey(1) & 0xFF == 27:
@@ -133,6 +169,8 @@ def main():
 
     cap.release()
     cv2.destroyAllWindows()
+    plt.ioff()
+    plt.show()
 
 
 if __name__ == "__main__":
